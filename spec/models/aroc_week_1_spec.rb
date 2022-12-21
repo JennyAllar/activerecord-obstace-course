@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'byebug'
 
 describe 'ActiveRecord Obstacle Course, Week 1' do
 
@@ -16,12 +17,15 @@ describe 'ActiveRecord Obstacle Course, Week 1' do
 
   it '1. finds orders by amount' do
     # ----------------------- Using Ruby -------------------------
-    orders_of_500 = Order.all.select { |order| order.amount == 500 }
-    orders_of_200 = Order.all.select { |order| order.amount == 200 }
+    # @real=0.0023669999791309237
+    # orders_of_500 = Order.all.select { |order| order.amount == 500 }
+    # orders_of_200 = Order.all.select { |order| order.amount == 200 }
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    # @real=0.0002500000409781933 ( 10x faster )
+    orders_of_500 = Order.where(amount: 500)
+    orders_of_200 = Order.where(amount: 200)
     # ------------------------------------------------------------
 
     # Expectation
@@ -31,12 +35,13 @@ describe 'ActiveRecord Obstacle Course, Week 1' do
 
   it '2. finds order id of smallest order' do
     # ----------------------- Using Raw SQL ----------------------
-    order_id = ActiveRecord::Base.connection.execute('SELECT id FROM orders ORDER BY amount ASC LIMIT 1').first['id']
+    # @real=0.001062000053934753
+    # order_id = ActiveRecord::Base.connection.execute('SELECT id FROM orders ORDER BY amount ASC LIMIT 1').first['id']
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
-    # Your solution should not contain the actual ID of the order anywhere.
+    # @real=0.001032999949529767
+    order_id = Order.order(:amount).limit(1).take.id
     # ------------------------------------------------------------
 
     # Expectation
@@ -45,12 +50,13 @@ describe 'ActiveRecord Obstacle Course, Week 1' do
 
   it '3. finds order id of largest order' do
     # ----------------------- Using Raw SQL ----------------------
-    order_id = ActiveRecord::Base.connection.execute('SELECT id FROM orders ORDER BY amount DESC LIMIT 1').first['id']
+    # @real=0.0011199999134987593
+    # order_id = ActiveRecord::Base.connection.execute('SELECT id FROM orders ORDER BY amount DESC LIMIT 1').first['id']
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
-    # Your solution should not contain the ID of the order anywhere
+    # @real=0.0014700000174343586
+    order_id = Order.order(amount: :desc).limit(1).take.id
     # ------------------------------------------------------------
 
     # Expectation
@@ -59,17 +65,20 @@ describe 'ActiveRecord Obstacle Course, Week 1' do
 
   it '4. finds orders of multiple amounts' do
     # ----------------------- Using Ruby -------------------------
-    orders_of_500_and_700 = Order.all.select do |order|
-      order.amount == 500 || order.amount == 700
-    end
-
-    orders_of_700_and_1000 = Order.all.select do |order|
-      order.amount == 700 || order.amount == 1000
-    end
+    # @real=0.0022820000303909183
+    # orders_of_500_and_700 = Order.all.select do |order|
+    #   order.amount == 500 || order.amount == 700
+    # end
+    #
+    # orders_of_700_and_1000 = Order.all.select do |order|
+    #   order.amount == 700 || order.amount == 1000
+    # end
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    # @real=0.0008270000107586384
+    orders_of_500_and_700 = Order.where(amount: 500).or(Order.where(amount: 700))
+    orders_of_700_and_1000 = Order.where(amount: 700).or(Order.where(amount: 1000))
     # ------------------------------------------------------------
 
     # Expectation
@@ -82,11 +91,16 @@ describe 'ActiveRecord Obstacle Course, Week 1' do
     expected_objects = [@item_1, @item_4, @item_2]
 
     # ----------------------- Using Ruby -------------------------
-    items = Item.all.select { |item| ids_to_find.include?(item.id) }
+    # @real=0.0017600000137463212
+    # items = Item.all.select { |item| ids_to_find.include?(item.id) }
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    # @real=0.001661999966017902
+    # items = Item.find(ids_to_find)
+
+    # @real=0.0001860000193119049
+    items = Item.where(id: ids_to_find)
     # ------------------------------------------------------------
 
     # Expectation
