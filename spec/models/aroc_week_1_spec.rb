@@ -97,7 +97,7 @@ describe 'ActiveRecord Obstacle Course, Week 1' do
 
     # ------------------ Using ActiveRecord ----------------------
     # @real=0.001661999966017902
-    # items = Item.find(ids_to_find)
+    Item.find(ids_to_find)
 
     # @real=0.0001860000193119049
     items = Item.where(id: ids_to_find)
@@ -111,11 +111,26 @@ describe 'ActiveRecord Obstacle Course, Week 1' do
     ids_to_find = [@order_1.id, @order_3.id, @order_5.id, @order_7.id]
 
     # ----------------------- Using Ruby -------------------------
-    orders = Order.all.select { |order| ids_to_find.include?(order.id) }
+    # @real=0.15858900011517107
+    # orders = Order.all.select { |order| ids_to_find.include?(order.id) }
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
     # Solution goes here
+    # @real=0.03791700000874698
+    Order.all.select { |order| ids_to_find.include?(order.id) }
+
+    # @real=0.039806999964639544
+    Order.find([ids_to_find[1], ids_to_find[2], ids_to_find[0], ids_to_find[3]])
+
+    # @real=0.04094600002281368
+    Order.order(:id).find(ids_to_find)
+
+    # @real=0.04245100007392466
+    Order.find(ids_to_find)
+
+    # @real=0.0031190000008791685
+    orders = Order.where(id: ids_to_find)
     # ------------------------------------------------------------
 
     # Expectation
@@ -125,11 +140,15 @@ describe 'ActiveRecord Obstacle Course, Week 1' do
   it '7. finds orders with an amount between 700 and 1000' do
     expected_result = [@order_11, @order_13, @order_8, @order_10, @order_15, @order_14, @order_12]
     # ----------------------- Using Ruby -------------------------
-    orders_between_700_and_1000 = Order.all.select { |order| order.amount >= 700 && order.amount <= 1000 }
+    # @real=0.2554030001629144
+    # orders_between_700_and_1000 = Order.all.select { |order| order.amount >= 700 && order.amount <= 1000 }
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    # @real=0.01324799982830882
+    # orders_between_700_and_1000 = Order.where('amount >= 700 and amount <= 1000')
+    # @real=0.00014699995517730713
+    orders_between_700_and_1000 = Order.where(amount: 700..1000)
     # ------------------------------------------------------------
 
     # Expectation
@@ -140,11 +159,16 @@ describe 'ActiveRecord Obstacle Course, Week 1' do
     expected_result = [@order_3, @order_2, @order_1, @order_4]
 
     # ----------------------- Using Ruby -------------------------
-    orders_less_than_550 = Order.all.select { |order| order.amount < 550 }
+    # orders_less_than_550 = Order.all.select { |order| order.amount < 550 }
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    # @real=0.0011579999700188637
+    # orders_less_than_550 = Order.where('amount < 550')
+    # @real=0.0001509999856352806
+    # orders_less_than_550 = Order.where("amount < ?", 550)
+    # @real=0.00016499985940754414
+    orders_less_than_550 = Order.where(amount: 0...550)
     # ------------------------------------------------------------
 
     # Expectation
