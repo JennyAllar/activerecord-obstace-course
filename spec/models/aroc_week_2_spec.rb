@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'byebug'
 
 describe 'ActiveRecord Obstacle Course, Week 2' do
 
@@ -11,7 +12,7 @@ describe 'ActiveRecord Obstacle Course, Week 2' do
 # ----------------------
 
 
-  it '9. finds orders for a user' do
+it '9. finds orders for a user' do
     expected_result = [@order_3, @order_15, @order_9, @order_12]
 
     # ----------------------- Using Ruby -------------------------
@@ -28,7 +29,7 @@ describe 'ActiveRecord Obstacle Course, Week 2' do
     expect(orders_of_user_3).to eq(expected_result)
   end
 
-  it '10. sorts the orders from most expensive to least expensive' do
+it '10. sorts the orders from most expensive to least expensive' do
     expected_result = [
       @order_15, @order_14, @order_13, @order_12, @order_11,
       @order_10, @order_8, @order_9, @order_7, @order_6,
@@ -50,7 +51,7 @@ describe 'ActiveRecord Obstacle Course, Week 2' do
     expect(orders).to eq(expected_result)
   end
 
-  it '11. sorts the orders from least expensive to most expensive' do
+it '11. sorts the orders from least expensive to most expensive' do
     expected_result = [
       @order_1, @order_2, @order_3, @order_4, @order_5,
       @order_6, @order_7, @order_9, @order_8, @order_10,
@@ -70,7 +71,7 @@ describe 'ActiveRecord Obstacle Course, Week 2' do
     expect(orders).to eq(expected_result)
   end
 
-  it '12. should return all items except items 2, 5 and 6' do
+it '12. should return all items except items 2, 5 and 6' do
     items_not_included = [@item_2, @item_5, @item_6]
     expected_result = [
       @item_1, @item_4, @item_9, @item_10,
@@ -89,23 +90,25 @@ describe 'ActiveRecord Obstacle Course, Week 2' do
     expect(items.sort).to eq(expected_result.sort)
   end
 
-  it "13. groups an order's items by name" do
+it "13. groups an order's items by name" do
     expected_result = [@item_4, @item_2, @item_5, @item_3]
 
     # ----------------------- Using Ruby -------------------------
+    # @real=0.02165299979969859
     order = Order.find(@order_3.id)
     grouped_items = order.items.sort_by { |item| item.name }
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    # @real=0.0002819998189806938
+    grouped_items = order.items.order(:name)
     # ------------------------------------------------------------
 
     # Expectation
     expect(grouped_items).to eq(expected_result)
   end
 
-  it '14. plucks all values from one column' do
+it '14. plucks all values from one column' do
     expected_result = ['Abercrombie', 'Banana Republic', 'Calvin Klein', 'Dickies', 'Eddie Bauer', 'Fox', 'Giorgio Armani', 'Hurley', 'Izod', 'J.crew']
 
     # ----------------------- Using Ruby -------------------------
@@ -123,7 +126,7 @@ describe 'ActiveRecord Obstacle Course, Week 2' do
     expect(names).to eq(expected_result)
   end
 
-  it '15. gets all item names associated with all orders' do
+it '15. gets all item names associated with all orders' do
     expected_result = [
       'Dickies', 'Giorgio Armani', 'Banana Republic', 'Eddie Bauer',
       'Eddie Bauer', 'Banana Republic', 'J.crew', 'Calvin Klein',
@@ -154,7 +157,7 @@ describe 'ActiveRecord Obstacle Course, Week 2' do
 
     # ------------------ Using ActiveRecord ----------------------
     # Solution goes here
-    # names = Order.all.joins(:items).pluck(:name)
+    names = Order.joins(:items).pluck(:name)
     # ------------------------------------------------------------
 
     # Expectation
