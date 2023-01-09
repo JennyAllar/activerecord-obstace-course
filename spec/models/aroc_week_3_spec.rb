@@ -16,19 +16,22 @@ describe 'ActiveRecord Obstacle Course, Week 3' do
     expected_result = [@user_2.name, @user_3.name, @user_1.name]
 
     # ----------------------- Using Raw SQL-----------------------
+    # @real=0.009393999818712473
     # users = ActiveRecord::Base.connection.execute("
     #   select
     #     distinct users.name
     #   from users
     #     join orders on orders.user_id=users.id
     #     join order_items ON order_items.order_id=orders.id
-    #   where order_items.item_id=#{@item_8.id}
+    #   where order_items.item_id=#{item_8.id}
     #   ORDER BY users.name")
     # users = users.map {|u| u['name']}
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    # @real=0.013429999817162752
+    users = User.select(:name).joins(:orders).distinct.joins(:items).order(:name)
+    # @real=0.03507799981161952
     users = User.joins(orders: :order_items).distinct.where(order_items: {item_id: @item_8.id}).pluck(:name)
     # ------------------------------------------------------------
 
@@ -44,7 +47,7 @@ describe 'ActiveRecord Obstacle Course, Week 3' do
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    names = Item.select(:name).joins(:order_items).distinct.where(order_items: {order_id: Order.last.id}).pluck(:name)
     # ------------------------------------------------------------
 
     # Expectation
