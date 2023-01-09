@@ -43,11 +43,15 @@ describe 'ActiveRecord Obstacle Course, Week 3' do
     expected_result = ['Abercrombie', 'Giorgio Armani', 'J.crew', 'Fox']
 
     # ----------------------- Using Ruby -------------------------
+    # @real=0.015658000018447638
     names = Order.last.items.all.map(&:name)
     # ------------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
+    # @real=0.0376199996098876
     names = Item.select(:name).joins(:order_items).distinct.where(order_items: {order_id: Order.last.id}).pluck(:name)
+    # @real=0.00861399993300438
+    names = Order.last.items.pluck(:name)
     # ------------------------------------------------------------
 
     # Expectation
