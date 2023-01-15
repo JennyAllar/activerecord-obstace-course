@@ -88,11 +88,13 @@ describe 'ActiveRecord Obstacle Course, Week 3' do
 
   it '19. returns the average amount for all orders' do
     # ---------------------- Using Ruby -------------------------
+    # @real=0.030288000009022653
     average = (Order.all.map(&:amount).inject(:+)) / (Order.count)
     # -----------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    # @real=0.002996000024722889
+    average = Order.average(:amount)
     # ------------------------------------------------------------
 
     # Expectation
@@ -101,6 +103,7 @@ describe 'ActiveRecord Obstacle Course, Week 3' do
 
   it '20. returns the average amount for all orders for one user' do
     # ---------------------- Using Ruby -------------------------
+    # @real=0.025990000023739412
     orders = Order.all.map do |order|
       order if order.user_id == @user_3.id
     end.select{|i| !i.nil?}
@@ -109,7 +112,8 @@ describe 'ActiveRecord Obstacle Course, Week 3' do
     # -----------------------------------------------------------
 
     # ------------------ Using ActiveRecord ----------------------
-    # Solution goes here
+    # @real=0.001931000006152317
+    average = Order.where(user_id: @user_3.id).average(:amount)
     # ------------------------------------------------------------
 
     # Expectation
