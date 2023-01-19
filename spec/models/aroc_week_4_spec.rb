@@ -13,11 +13,13 @@ describe 'ActiveRecord Obstacle Course, Week 4' do
 
   it '21. calculates the total sales' do
     # ---------------------- Using Ruby -------------------------
-    total_sales = Order.all.map(&:amount).inject(:+)
+    # @real=0.09925899998052046
+    # total_sales = Order.all.map(&:amount).inject(:+)
     # -----------------------------------------------------------
 
     # ------------------ Using ActiveRecord ---------------------
-    # Solution goes here
+    # @real=0.005200999963562936
+    total_sales = Order.sum(:amount)
     # -----------------------------------------------------------
 
     # Expectation
@@ -26,6 +28,7 @@ describe 'ActiveRecord Obstacle Course, Week 4' do
 
   it '22. calculates the total sales for all but one user' do
     # ---------------------- Using Ruby -------------------------
+    # @real=0.1284999999916181
     orders = Order.all.map do |order|
       order if order.user_id != @user_2.id
     end.select{|i| !i.nil?}
@@ -33,7 +36,8 @@ describe 'ActiveRecord Obstacle Course, Week 4' do
     # -----------------------------------------------------------
 
     # ------------------ Using ActiveRecord ---------------------
-    # Solution goes here
+    # @real=0.003308999992441386
+    total_sales = Order.where.not(user_id: @user_2.id).sum(:amount)
     # -----------------------------------------------------------
 
     # Expectation
@@ -44,12 +48,14 @@ describe 'ActiveRecord Obstacle Course, Week 4' do
     expected_result = [@order_3, @order_11, @order_5, @order_13, @order_10, @order_15, @order_9]
 
     # ------------------ Inefficient Solution -------------------
-    order_ids = OrderItem.where(item_id: @item_4.id).map(&:order_id)
-    orders = order_ids.map { |id| Order.find(id) }
+    # @real=0.0566359999938868
+    # order_ids = OrderItem.where(item_id: @item_4.id).map(&:order_id)
+    # orders = order_ids.map { |id| Order.find(id) }
     # -----------------------------------------------------------
 
     # ------------------ Improved Solution ----------------------
-    #  Solution goes here
+    #  @real=0.0014200000441633165
+    orders = Order.joins(:order_items).where(order_items: {item_id: @item_4.id})
     # -----------------------------------------------------------
 
     # Expectation
@@ -60,13 +66,15 @@ describe 'ActiveRecord Obstacle Course, Week 4' do
     expected_result = [@order_11, @order_5]
 
     # ------------------ Inefficient Solution -------------------
-    orders = Order.where(user: @user_2)
-    order_ids = OrderItem.where(order_id: orders, item: @item_4).map(&:order_id)
-    orders = order_ids.map { |id| Order.find(id) }
+    # @real=0.0692439999547787
+    # orders = Order.where(user: @user_2)
+    # order_ids = OrderItem.where(order_id: orders, item: @item_4).map(&:order_id)
+    # orders = order_ids.map { |id| Order.find(id) }
     # -----------------------------------------------------------
 
     # ------------------ Improved Solution ----------------------
-    #  Solution goes here
+    #  @real=0.0022220000391826034
+    orders = Order.where(user_id: @user_2.id).joins(:order_items).where(order_items: {item_id: @item_4.id})
     # -----------------------------------------------------------
 
     # Expectation
@@ -84,11 +92,12 @@ describe 'ActiveRecord Obstacle Course, Week 4' do
       item if item.orders.present?
     end
 
-    ordered_items = ordered_items.compact
+    p ordered_items = ordered_items.compact
     # ------------------------------------------------------------
 
     # ------------------ ActiveRecord Solution ----------------------
     # Solution goes here
+    ordered_items = Item.joins(:order_items).distinct
     # ---------------------------------------------------------------
 
     # Expectations
