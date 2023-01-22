@@ -20,6 +20,7 @@ describe 'ActiveRecord Obstacle Course, Week 5' do
     expected_result = ['Abercrombie', 'Banana Republic', 'Calvin Klein', 'Dickies', 'Eddie Bauer', 'Fox', 'Giorgio Armani', 'Izod', 'J.crew']
 
     # ----------------------- Using Ruby -------------------------
+    # @real=0.09188999992329627
     items = Item.all
 
     ordered_items = items.map do |item|
@@ -31,9 +32,10 @@ describe 'ActiveRecord Obstacle Course, Week 5' do
     # ------------------------------------------------------------
 
     # ------------------ ActiveRecord Solution ----------------------
-    # Solution goes here
-    # When you find a solution, experiment with adjusting your method chaining.
-    # Which ones are you able to switch around without relying on Ruby's Enumerable methods?
+    # @real=0.019018999999389052
+    ordered_items_names = Item.select(:name).joins(:order_items).distinct.order(:name).pluck(:name)
+    # @real=0.040237999986857176
+    # ordered_items_names = Item.joins(:orders).distinct.order(:name).pluck(:name)
     # ---------------------------------------------------------------
 
     # Expectations
